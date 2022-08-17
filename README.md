@@ -6,3 +6,4 @@ Add the magic_beam folder to your Matlab path. There are many ways to this. One 
 
 ![mb_examples.purkinje.m](./resources/mb_examples_purkinje.png)
 
+[![DOI](https://zenodo.org/badge/525891782.svg)](https://zenodo.org/badge/latestdoi/525891782)
