@@ -4,7 +4,7 @@ authors:
 - family-names: "Duijnhouwer"
   given-names: "Jacob"
   orcid: "https://orcid.org/0000-0003-2707-4483"
-title: "Magic Beam"
+title: "Magic Beam: Optical modeling in MATLAB"
 version: 1.0.0
 doi: 10.5281/zenodo.7004623
 date-released: 2022-08-17
