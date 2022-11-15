@@ -1,16 +1,13 @@
 classdef Scene < mb.base.Base
-    
+
     properties (Access=public)
         bodies=struct
         lights=struct
         max_rays_total=1e6
         max_generations_per_ray=100
+        rays=mb.Ray.empty
     end
-    
-    properties (GetAccess=public,SetAccess=private)
-        rays=mb.Ray.empty;
-    end
-    
+
     methods (Access=public)
         function O=Scene(varargin)
             O.apply_name_value_pairs(O,varargin);
@@ -155,8 +152,8 @@ classdef Scene < mb.base.Base
             p=inputParser;
             p.addParameter('xylabel',[("x ("+mb.settings('length_unit')+")") ("y ("+mb.settings('length_unit')+")")],@(x)isstring(x) && numel(x)==2);
             p.addParameter('equal',true,@(x)islogical(x)||isempty(x));
-            p.addParameter('title',[],@(x)ischar(x)||isstring(x));
-            p.addParameter('subsample_rays',1,@(x)isnumeric(x)&&x>0&&x<=1); % show random selection of rays 
+            p.addParameter('title',[],@(x)ischar(x)||isstring(x)||iscell(x));
+            p.addParameter('ray_visibility',1,@(x)isnumeric(x)&&x>=0&&x<=1); % show random selection of rays, 1 means show all rays, 0 none, 0.5 means a random half of them 
             p.parse(varargin{:});
             was_hold=ishold();
             if ~was_hold
@@ -164,15 +161,20 @@ classdef Scene < mb.base.Base
             end
             % plot the lights, rays, and bodies. note that 'zlayer', not plot order, determines the
             % occlussion
-            ray_order=randperm(numel(O.rays));
-            if p.Results.subsample_rays<1
-                ray_order=ray_order(1:ceil(numel(O.rays)*p.Results.subsample_rays));
+            if p.Results.ray_visibility==1
+                ray_order=1:numel(O.rays);
+            elseif p.Results.ray_visibility==0
+                ray_order=[];
+            else
+                ray_order=randperm(numel(O.rays));
+                ray_order=ray_order(1:ceil(numel(O.rays)*p.Results.ray_visibility));
             end
             for i=ray_order(:)'
                 O.rays(i).show;
-                hold on
             end
+            % Show the lights
             cellfun(@(x)x.show('xylabel',"",'equal',[]),struct2cell(O.lights));
+            % Show the bodies
             cellfun(@(x)x.show('xylabel',"",'equal',[]),struct2cell(O.bodies));
             % Apply the axes styles
             fontsize=mb.settings('fontsize');
@@ -185,7 +187,11 @@ classdef Scene < mb.base.Base
                 axis('equal');
             end
             if ~isempty(p.Results.title)
-                title(p.Results.title);
+                if iscell(p.Results.title)
+                    title(p.Results.title{:});
+                else
+                    title(p.Results.title);
+                end
             end
             if ~was_hold
                 hold('off')
