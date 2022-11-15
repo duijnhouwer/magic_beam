@@ -477,6 +477,17 @@ classdef (Abstract) Math < handle
             delta1 = mb.library.Math.vec_signed_deg(vec_mid,vec1);
             delta2 = mb.library.Math.vec_signed_deg(vec_mid,vec2);
         end
-        
+
+        function M=clamp(M,min_max)
+            % M=clamp(M,min_max)
+            % Clamp the values in ND-matrix M between 0 and 1, or, if
+            % specified, the values in min_max
+            M=M-min(M(:));
+            M=M/max(M(:));
+            if nargin==2
+                M=M*range(min_max);
+                M=M+min(min_max);
+            end
+        end
     end
 end
