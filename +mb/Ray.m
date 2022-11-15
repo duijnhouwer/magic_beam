@@ -34,7 +34,7 @@ classdef Ray < mb.base.Base & mb.base.Visible
                 return % Don't plot if the intensity is zero
             end
             ax=gca;
-            if isinf(O.lineage.deathplace)
+            if isinf(O.length) %|| O.lineage.deathplace)
                 % The ray did not hit anytning and is off into infinity
                 len=mb.settings('infinite_ray_display_length');
                 cap='o';
