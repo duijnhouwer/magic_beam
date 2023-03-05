@@ -106,9 +106,11 @@ classdef GullstrandVar < mb.body.Body
                 O.add_boundary('Line',"iris_ccw",'media',["*" "*"],'n1n2',[0 eps],'r1r2',[0 0],'length',ccw_len,'x',O.pupil_x,'y',ccw_mid,'ori',0);
                 O.add_boundary('Line',"iris_cw",'media',["*" "*"],'n1n2',[0 eps],'r1r2',[0 0],'length',cw_len,'x',O.pupil_x,'y',cw_mid,'ori',0);
             end
-            
+
             % Apply the body's orientation to the boundaries
-            cellfun(@(x)x.rotate(O.orientation,[O.xpos O.ypos]),struct2cell(O.boundaries));
+            O.pivot_x=O.boundaries.retina.xpos;
+            O.pivot_y=O.boundaries.retina.ypos;
+            cellfun(@(x)x.rotate(O.orientation,[O.xpos+O.pivot_x O.ypos+O.pivot_y]),struct2cell(O.boundaries));
         end
     end
     

@@ -49,7 +49,7 @@ function results = run_sim
         scene.shine;
         
         %% Get the distrubution of rays on the retina
-        hit_retinal_arc{i} = mb.library.Analysis.hit_distribution(scene.rays,"retina");
+        hit_retinal_arc{i} = mb.library.analysis.hit_distribution(scene.rays,"retina");
         scenes(i)=deep_copy(scene);
         toc(ttt_rep); % won't be printed in parfor loop
     end

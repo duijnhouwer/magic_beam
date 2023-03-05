@@ -8,6 +8,8 @@ classdef (Abstract) Visible < matlab.mixin.SetGet
         xpos=0 % Horizontal position of center. [0]
         ypos=0 % Vertical position of center. [0]
         orientation=0 % Orientation-angle of nominal front of element. [0]
+        pivot_x=0; % Rotation point relative to [xpos ypos]
+        pivot_y=0; % Rotation point relative to [xpos ypos]
         linestyle='-'
         linewidth=1
         markersize=12
@@ -35,6 +37,18 @@ classdef (Abstract) Visible < matlab.mixin.SetGet
                 error('val must be a non-empty numeric scalar');
             end
             O.ypos=val;
+        end
+        function set.pivot_x(O,val)
+             if ~isnumeric(val) || ~isscalar(val) || isempty(val)
+                error('val must be a non-empty numeric scalar');
+            end
+            O.pivot_x=val;
+        end
+        function set.pivot_y(O,val)
+             if ~isnumeric(val) || ~isscalar(val) || isempty(val)
+                error('val must be a non-empty numeric scalar');
+            end
+            O.pivot_y=val;
         end
         function set.orientation(O,val)
             O.orientation=val;

@@ -39,7 +39,8 @@ function out = settings(varargin)
     if nargin==1
         arg=varargin{1};
         if ischar(arg) || isstring(arg)
-            if strcmpi(arg,'factory_reset')
+            arg=lower(arg);
+            if strcmp(arg,'factory_reset')
                 % Set all settings back to default
                 s = default_settings;
                 out = s;

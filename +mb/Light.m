@@ -58,7 +58,7 @@ classdef Light < mb.base.Base & mb.base.Visible
             dcopy = copy(O);
         end
         
-        %% Convenience function that aims light bundle at specific line-segment
+        %% Convenience function that aims light bundle at line-segment specified by pt1 and pt2
         function aim_rays_at_line_segment(O,n_rays,pt1,pt2)
             [midori,delta1,delta2] = mb.library.Math.angular_extent([O.xpos;O.ypos],pt1,pt2);
             O.orientation=midori; % aim at origin

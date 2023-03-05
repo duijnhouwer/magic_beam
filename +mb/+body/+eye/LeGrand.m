@@ -24,9 +24,11 @@ classdef LeGrand < mb.body.Body
             O.add_boundary('Arc',"sclera",'media',["sclera" "air"],'n1n2',[0.0000 1.0000],'r1r2',[0 0],'x',0,'radius',11.55,'arc_delta',180,'span',289.34);
             O.update_iris;
             % Apply the body's orientation to the boundaries
-            cellfun(@(x)x.rotate(O.orientation,[O.xpos O.ypos]),struct2cell(O.boundaries));
+            O.pivot_x=O.boundaries.retina.xpos;
+            O.pivot_y=O.boundaries.retina.ypos;
+            cellfun(@(x)x.rotate(O.orientation,[O.xpos+O.pivot_x O.ypos+O.pivot_y]),struct2cell(O.boundaries));
         end
-        
+
     end
     
     methods (Access=private)

@@ -10,7 +10,7 @@ classdef (Abstract) Boundary < mb.base.Base & mb.base.Visible
     
     properties (Access=protected)
         body_xpos; % Keep track of the ...
-        body_ypos; % psotion parameters 
+        body_ypos; % position parameters 
         body_orientation;
     end
            
@@ -20,8 +20,7 @@ classdef (Abstract) Boundary < mb.base.Base & mb.base.Visible
             arguments
                 O, angle (1,1) double, pivot_xy (1,2) double
             end
-            % Rotate around an arbitrary pivot point. To rotate around the center of the
-            % arc, you can also update the 'orientation' property directly.
+            % Rotate the boundary around an arbitrary pivot point.
             O.orientation=O.orientation+angle;
             R = [cosd(angle) -sind(angle); sind(angle) cosd(angle)];
             rotated_xy =  R*transpose([O.xpos O.ypos]-pivot_xy);
@@ -64,17 +63,19 @@ classdef (Abstract) Boundary < mb.base.Base & mb.base.Visible
         end
         
         function body_prop_change(O,src,evt)
-            % Propagate property changes of the containing body to this boundary
+            % Propagate property changes of the body that contains this boundary to this boundary
             switch src.Name
                 case 'xpos'
-                    O.xpos=O.xpos+evt.AffectedObject.xpos - O.body_xpos;
+                    delta=evt.AffectedObject.xpos - O.body_xpos;
+                    O.xpos=O.xpos+delta;
                     O.body_xpos=evt.AffectedObject.xpos;
                 case 'ypos'
-                    O.ypos=O.ypos+evt.AffectedObject.ypos - O.body_ypos;
+                    delta=evt.AffectedObject.ypos - O.body_ypos;
+                    O.ypos=O.ypos+delta;
                     O.body_ypos=evt.AffectedObject.ypos;
                 case 'orientation'
-                    delta = evt.AffectedObject.orientation - O.body_orientation;
-                    O.rotate(delta,[O.body_xpos O.body_ypos]);
+                    delta=evt.AffectedObject.orientation - O.body_orientation;
+                    O.rotate(delta,[evt.AffectedObject.xpos evt.AffectedObject.ypos]+[evt.AffectedObject.pivot_x evt.AffectedObject.pivot_y]);
                     O.body_orientation=evt.AffectedObject.orientation;
                 otherwise % e.g. linestyle, color
                     O.(src.Name)=evt.AffectedObject.(src.Name);  % simply copy

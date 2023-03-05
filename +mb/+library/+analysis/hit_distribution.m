@@ -1,13 +1,26 @@
 
 function [hit_theta,hit_world_xy,hit_arc] = hit_distribution(rays,arc)
-    % Loop of the array of rays and see where they hit the arc-class object
-    % with name in variable arc_name, for example "retina".
+   
+
+    % hit_theta = hit_distribution(rays,arc)
+    % Return distribution of rays hitting the arc, in arc coordinates (degrees)
+    %
+    % [~,hit_world_xy] = hit_distribution(rays,arc)
+    % Return distribution of rays hitting the arc, in world coordinates (x,y) in mm
+    %
+    % [~,~,hit_arc] = hit_distribution(rays,arc)
+    % Return distribution of rays hitting the arc in arc coordinates (mm)
     %
     % Note: 'hit_distribution as of yet only implemented for objects of class mb.arc'
 
-    if ~isa(rays,'mb.Ray') || ~isa(arc,'mb.boundary.Arc')
-        error('Arg1 must be an array of objects of class ''mb.Ray'' and arg2 must be an object of class ''mb.boundary.Arc''');
+    errstr="";
+    if ~isa(rays,'mb.Ray')
+        errstr=errstr+"Arg1 must be an array of objects of class 'mb.Ray.'";
     end
+    if ~isa(arc,'mb.boundary.Arc')
+        errstr=errstr+" Arg2 must be an object of class 'mb.boundary.Arc.'";
+    end
+    error(strtrim(errstr));
 
     cx = arc.xpos;
     cy = arc.ypos;

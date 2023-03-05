@@ -23,7 +23,7 @@ classdef Arizona < mb.body.Body
     methods (Access=private)
         function set_boundaries(O)
             % Below values are from page 16 of the following book (PDF in mb/resources):
-            % Field Guide to Field Guide to Visual and Ophthalmic Optics (2004) Jim Schwiegerling
+            % Field Guide to Visual and Ophthalmic Optics (2004) Jim Schwiegerling
             
             A=O.accommodation;
             Rant = 12.0-0.4*A;
@@ -55,7 +55,9 @@ classdef Arizona < mb.body.Body
             end
             
             % Apply the body's orientation to the boundaries
-            cellfun(@(x)x.rotate(O.orientation,[O.xpos O.ypos]),struct2cell(O.boundaries));
+            O.pivot_x=O.boundaries.retina.xpos;
+            O.pivot_y=O.boundaries.retina.ypos;
+            cellfun(@(x)x.rotate(O.orientation,[O.xpos+O.pivot_x O.ypos+O.pivot_y]),struct2cell(O.boundaries));
             
         end
     end

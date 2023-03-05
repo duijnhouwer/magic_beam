@@ -5,15 +5,15 @@ function monocular_parallax
 
     %* Set all magic_beam settings to their defaults
     mb.settings('factory_reset');
-    mb.settings('reflex',false)
+    mb.settings('reflex',false);
    
     gamma=0.1;
 
-    orientations=[0 15];
+    orientations=[0 20];
 
     for i=1:numel(orientations)
 
-        [scene,RGB,xx,yy]=render_two_light_scene(orientations(i));
+        [scene,RGB,xx,yy,retinalfields]=render_two_light_scene(orientations(i));
 
         subplot(2,numel(orientations),i);
         image(xx,yy,RGB.^gamma);
@@ -22,32 +22,42 @@ function monocular_parallax
         axis manual
         set(gca,'XLim',[min(xx) max(xx)],'YLim',[min(yy) max(yy)]);
 
+        subplot(2,numel(orientations),numel(orientations)+i)
+        histogram(retinalfields{1},'FaceColor','r');
+        hold on
+        histogram(retinalfields{2},'FaceColor','b');
+        set(gca,'FontSize',mb.settings('FontSize')*0.75)
+        xlabel('Retinal location (deg)','FontSize', mb.settings('FontSize'));
+        ylabel('Number of rays (deg)','FontSize', mb.settings('FontSize'))
     end
 
 end
 
-function [scene,RGB,xx,yy]=render_two_light_scene(eye_orientation)
+function [scene,RGB,xx,yy,hit_retinal_arc]=render_two_light_scene(eye_orientation)
 
-    %* Create a Le Grand model eyeball
-    eye = mb.body.eye.Arizona;
+    %* Create a model eyeball
+    eye = mb.body.eye.GullstrandVar;
     eye.xpos = 0;
     eye.ypos = 0;
+   
     eye.orientation=eye_orientation;
+    eye.accommodation=1;
     eye.color=[1 1 1 1];
     eye.linewidth=2;
 
     % 
+    hit_retinal_arc=cell(2,1);
     for i=1:2
         if i==1
-            distance=300;
+            distance=10000;
         else
-            distance=6000;
+            distance=500;
         end
         %* Create the near light
         light = mb.Light;
         light.xpos = distance;
         light.ypos = 0;
-        light.aim_rays_at_line_segment(100,[0 10],[0 -10]);
+        light.aim_rays_at_line_segment(1000,[0 8],[0 -8]);
         %* Add the body and the light to a scene
         scene = mb.Scene;
         scene.add_body(eye);
@@ -55,7 +65,8 @@ function [scene,RGB,xx,yy]=render_two_light_scene(eye_orientation)
         %* Let there be light
         scene.shine
         % Rasterize the rays
-        [I(:,:,i),xx,yy] = mb.library.Plot.rasterize_rays('rays',scene.rays,'xlim',[-30 50],'ylim',[-18 18],'pxsize',1); %#ok<AGROW> 
+        [I(:,:,i),xx,yy] = mb.library.Plot.rasterize_rays('rays',scene.rays,'xlim',[-25 25],'ylim',[-16 16],'pxsize',0.1); %#ok<AGROW> 
+        hit_retinal_arc{i} = mb.library.analysis.hit_distribution(scene.rays,eye.boundaries.retina);
     end
 
     %% Create an RGB image where light1 is red and light2 is blue
